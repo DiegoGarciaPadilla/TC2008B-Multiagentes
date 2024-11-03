@@ -1,23 +1,39 @@
 using UnityEngine;
 
+/// <summary>
+/// PlayerController class for controlling the player vehicle
+/// </summary>
 public class PlayerController : MonoBehaviour
 {
+    // Speed of the vehicle
+    public float speed = 10.0f;
+    // Maximum turn speed
+    public float turnSpeed = 100.0f;
+    // Decay factor for turn speed when moving slower
+    public float turnDampening = 0.5f;
+    // Input values for movement and turning
+    private float verticalInput;
+    private float horizontalInput;
 
-    // Speed of the player 
-    public float speed = 0.0f;
-    // Turn speed of the player
-    public float turnSpeed = 0.0f;
-    // Input for the player to move forward
-    public float verticalInput;
-    // Input for the player to turn
-    public float horizontalInput;
+    // Multiplayer support
+    public string inputId;
+
+    // Cameras for the player vehicle
+    public Camera mainCamera;
+    // Camera for the hood view
+    public Camera hoodCamera;
+    // Key to switch between cameras
+    public KeyCode switchKey = KeyCode.C;
+
+    // Rigidbody for realistic physics-based movement
+    private Rigidbody rb;
 
     /// <summary>
-    /// Start is called once before the first execution of Update after the MonoBehaviour is created
+    /// Start is called before the first frame update
     /// </summary>
     void Start()
     {
-        
+        rb = GetComponent<Rigidbody>();
     }
 
     /// <summary>
@@ -25,28 +41,31 @@ public class PlayerController : MonoBehaviour
     /// </summary>
     void Update()
     {
-        // Get the input for the player to move forward
-        this.verticalInput = Input.GetAxis("Vertical");
+        // Get input values for movement and turning
+        verticalInput = Input.GetAxis("Vertical" + inputId);
+        horizontalInput = Input.GetAxis("Horizontal" + inputId);
 
-        // Horizontal input for the player to move forward
-        this.horizontalInput = Input.GetAxis("Horizontal");
+        // Forward movement based on vertical input and speed
+        Vector3 moveDirection = transform.forward * verticalInput * speed * Time.deltaTime;
+        rb.MovePosition(rb.position + moveDirection);
 
-        // Move the player forward
-        // Time.deltaTime: The time in seconds it took to complete the last frame
-        // this.speed: The speed of the player
-        transform.Translate(Vector3.forward * Time.deltaTime * this.speed * this.verticalInput);
+        // Turn only if the vehicle is moving (i.e., verticalInput is non-zero)
+        if (Mathf.Abs(verticalInput) > 0.1f)
+        {
+            // Calculate turn speed based on current speed, dampened by turnDampening factor
+            float adjustedTurnSpeed = turnSpeed * turnDampening * Mathf.Abs(verticalInput);
+            float turn = horizontalInput * adjustedTurnSpeed * Time.deltaTime;
 
-        // Turn the player
-        // Time.deltaTime: The time in seconds it took to complete the last frame
-        // this.turnSpeed: The turn speed of the player
-        // this.horizontalInput: The input for the player to move forward
-        transform.Translate(Vector3.right * Time.deltaTime * this.turnSpeed * this.horizontalInput);
+            // Apply rotation around the Y axis (up)
+            Quaternion turnOffset = Quaternion.Euler(0, turn, 0);
+            rb.MoveRotation(rb.rotation * turnOffset);
+        }
 
-        // Rotate the player
-        // Vector3.up: The up direction of the player
-        // Time.deltaTime: The time in seconds it took to complete the last frame
-        // this.turnSpeed: The turn speed of the player
-        // this.horizontalInput: The input for the player to move right
-        transform.Rotate(Vector3.up, Time.deltaTime * this.turnSpeed * this.horizontalInput);
+        // Switch between cameras when the switch key is pressed
+        if (Input.GetKeyDown(switchKey))
+        {
+            mainCamera.enabled = !mainCamera.enabled;
+            hoodCamera.enabled = !hoodCamera.enabled;
+        }
     }
 }

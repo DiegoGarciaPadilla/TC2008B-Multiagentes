@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 /// <summary>
 /// Clase que contiene los componentes que integran una criatura

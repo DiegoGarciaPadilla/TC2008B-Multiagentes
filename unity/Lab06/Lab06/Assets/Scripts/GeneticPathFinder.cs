@@ -60,21 +60,17 @@ public class GeneticPathFinder : MonoBehaviour
         }
     }
 
-     public void Start()
-    {
-        InitCreature(new DNA(),Vector2.zero);
-    }
 
-      private void Update()
+    private void Update()
     {
         if(hasBeenInitialized && !hasFinished){
-            if(pathIndex == dna.genes.Count)
+            if(pathIndex == dna.genes.Count || Vector2.Distance(transform.position,target)<0.5f)
             {
                 hasFinished = true;
             }
             if((Vector2)transform.position == nextPoint)
             {
-                nextPoint = (Vector2)transform.position + dna.genes[pathIndex];
+                nextPoint = (Vector2)transform.position + dna.genes[pathIndex] * pathMultiplier;
                 pathIndex++;
             }
             else

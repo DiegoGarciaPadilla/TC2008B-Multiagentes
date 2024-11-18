@@ -25,6 +25,7 @@ public class BossAttackManager : MonoBehaviour
         new int[] { 3 },
         // Ataque 4
         new int[] { 0, 3 },
+        new int[] { 0, 1, 3 },
     };
 
     public float bpm = 115f; // Beats por minuto de la música

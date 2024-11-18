@@ -5,13 +5,12 @@ public class WaveShooting : MonoBehaviour
     public GameObject bulletPrefab; // Prefab de la bala
     public BulletCounter bulletCounter; // Referencia al contador de balas
     public float bulletSpeed = 2f; // Velocidad de las balas
-    public float shootInterval = 0.2f; // Tiempo entre cada conjunto de disparos
+    public float shootInterval = 0.2f ; // Intervalo de tiempo en segundos entre cada disparo
     public int bulletsPerWave = 20; // Número de balas en cada disparo de onda
     public float spreadAngle = 360f; // Ángulo de dispersión de las balas en la onda
     public float spawnRadius = 1f; // Radio desde el cual se dispararán las balas
 
     private float shootTimer = 0f;
-
     void Update()
     {
         shootTimer += Time.deltaTime;
